@@ -61,6 +61,9 @@
 			<thead class="bg-gray-50 text-xs uppercase text-gray-700 dark:bg-gray-700 dark:text-gray-400">
 				<tr>
 					<th class="px-6 py-3" scope="col">
+						SN
+					</th>
+					<th class="px-6 py-3" scope="col">
 						Product name
 					</th>
 					<th class="px-6 py-3" scope="col">
@@ -81,14 +84,21 @@
 				</tr>
 			</thead>
 			<tbody>
+                @php
+                    $count = 0;
+                @endphp
 				@foreach ($records as $record)
                 @php
+                    $count++;
                     $ammount += $record->price * $record->quantity_sold;
                 @endphp
 					<tr class="border-b bg-gray-50 dark:border-gray-700 dark:bg-gray-800">
 						<th class="whitespace-nowrap px-6 py-4 font-medium text-gray-900 dark:text-white" scope="row">
-							{{ $record->product_name }}
+							{{ $count }}
 						</th>
+						<td class="whitespace-nowrap px-6 py-4 font-medium text-gray-900 dark:text-white" scope="row">
+							{{ $record->product_name }}
+						</td>
 						<td class="px-6 py-4">
 							{{ $record->price }}
 						</td>

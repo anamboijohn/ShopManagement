@@ -19,7 +19,7 @@
 					type="submit">Search</button>
 			</div>
 		</form>
-        <a href="{{ route('product.index') }}" class="ml-5 px-3 py-2 rounded-lg hover:text-blue-400 mt-20">All products</a>
+		<a class="ml-5 mt-20 rounded-lg px-3 py-2 hover:text-blue-400" href="{{ route('product.index') }}">All products</a>
 
 	</div>
 
@@ -27,6 +27,9 @@
 		<table class="w-full text-left text-sm text-gray-500 dark:text-gray-400">
 			<thead class="bg-gray-50 text-xs uppercase text-gray-700 dark:bg-gray-700 dark:text-gray-400">
 				<tr>
+					<th class="px-6 py-3" scope="col">
+						SN
+					</th>
 					<th class="px-6 py-3" scope="col">
 						Product name
 					</th>
@@ -42,8 +45,12 @@
 				</tr>
 			</thead>
 			<tbody>
+				@php
+					$count = 0;
+				@endphp
 				@foreach ($products as $product)
 					@php
+						$count++;
 						$class = '';
 						if ($product->quantity <= 20) {
 						    $class = 'bg-red-500 text-white';
@@ -53,10 +60,13 @@
 						    $class = 'bg-orange-500 text-white';
 						}
 					@endphp
-					<tr class="border-b bg-gray-50 dark:border-gray-700 dark:bg-gray-800 {{ $class }}">
+					<tr class="{{ $class }} border-b bg-gray-50 dark:border-gray-700 dark:bg-gray-800">
 						<th class="whitespace-nowrap px-6 py-4 font-medium text-gray-900 dark:text-white" scope="row">
-							{{ $product->name }}
+							{{ $count }}
 						</th>
+						<td class="whitespace-nowrap px-6 py-4 font-medium text-gray-900 dark:text-white" scope="row">
+							{{ $product->name }}
+						</td>
 						<td class="px-6 py-4">
 							{{ $product->price }}
 						</td>
@@ -77,10 +87,10 @@
 									</form>
 								</div>
 								@if ($class != '')
-                                <div class="inline-flex">
-									<p class="font-semibold"> This product is finishing...</p>
-								</div>
-                                @endif
+									<div class="inline-flex">
+										<p class="font-semibold"> This product is finishing...</p>
+									</div>
+								@endif
 							</div>
 						</td>
 					</tr>
