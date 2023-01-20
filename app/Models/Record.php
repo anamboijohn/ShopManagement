@@ -35,8 +35,8 @@ class Record extends Model
                 fn ($query, $search) =>
                 $query->whereHas('product',
                     fn ($query) =>
-                    $query->where('name', '~*', request('search'))
-                        ->orWhere('description', '~*', request('search'))
+                    $query->where('name', env('DB_REGEX'), '%'.request('search').'%')
+                        ->orWhere('description', env('DB_REGEX'), '%'.request('search').'%')
                 )
 
             );

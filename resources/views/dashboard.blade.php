@@ -58,10 +58,24 @@
 						<a
 							class="mb-2 rounded-lg bg-blue-700 px-5 py-2.5 text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
 							href="{{ route('product.create') }}" role="button">Add Product+</a>
+                        <a href="{{ route('dashboard') }}" class="ml-5 border border-solid border-blue-400 px-3 py-2 rounded-lg hover:bg-blue-400 ">All products</a>
 					</div>
 				</div>
+				<center>
+					<div class="mb-5 w-fit" x-data={show:false}>
+
+						<button @click="show = !show" class="font-semibold"
+							x-text="show ? 'Close Product card color meaning' : 'Show Product card color meaning'"> show</button>
+						<ul class="bg-black" x-show="show" style="display:none">
+							<li class="text-red-500">Red (Products in stock are less than or equal to 20)</li>
+							<li class="text-yellow-500">Yellow (Products in stock are within the range 21-50)</li>
+							<li class="text-orange-500">Orange (Products in stock are within the raange 51-100)</li>
+							<li class="text-white">White (Products in stock are greater than 100)</li>
+						</ul>
+					</div>
+				</center>
 				@if ($products->isEmpty())
-					<div class="text-red-400">
+					<div class="text-xl text-red-400">
 						No Products Added Yet. Please Click on Add Products to add some products
 					</div>
 				@endif
@@ -69,8 +83,18 @@
 				<div class="grid grid-cols-12 gap-6">
 					<!-- Tab 3 -->
 					@foreach ($products as $product)
+						@php
+							$class = '';
+							if ($product->quantity <= 20) {
+							    $class = 'bg-red-500 text-white';
+							} elseif ($product->quantity <= 50) {
+							    $class = 'bg-yellow-500 text-white';
+							} elseif ($product->quantity <= 100) {
+							    $class = 'bg-orange-500 text-white';
+							}
+						@endphp
 						<div
-							class="relative col-span-10 rounded-md border border-gray-200 bg-white shadow-md md:col-span-5 lg:col-span-4">
+							class="{{ $class }} relative col-span-10 rounded-md border border-gray-200 bg-white shadow-md md:col-span-5 lg:col-span-4">
 							<div aria-hidden="true" class="absolute top-0 left-0 right-0 h-0.5 bg-indigo-500"></div>
 							<div class="border-b border-gray-200 px-5 pt-5 pb-6">
 								<header class="mb-2 flex items-center">
@@ -110,10 +134,15 @@
 											href="{{ route('product.edit', ['product' => $product->id]) }}">Edit</a>
 									</div>
 									<div class="inline-flex">
+										<a
+											class="ease-in-ou w-full items-center justify-center rounded border border-transparent bg-orange-500 px-3 py-2 text-sm font-medium leading-5 text-white shadow-sm transition duration-150 hover:bg-orange-700 focus:outline-none focus-visible:ring-2"
+											href="{{ route('product.stock', ['product' => $product->id]) }}"> Stock </a>
+									</div>
+									<div class="inline-flex">
 										<x-alpine.modal>
 											<x-slot name="trigger">
 												<button
-													class="w-full items-center justify-center rounded border border-transparent bg-red-500 px-3 py-2 text-sm font-medium leading-5 text-white shadow-sm transition duration-150 ease-in-out hover:bg-green-600 focus:outline-none focus-visible:ring-2">
+													class="w-full items-center justify-center rounded border border-transparent bg-red-500 px-3 py-2 text-sm font-medium leading-5 text-white shadow-sm transition duration-150 ease-in-out hover:bg-red-900 focus:outline-none focus-visible:ring-2">
 													Delete </button>
 											</x-slot>
 											<x-slot name="content">
@@ -143,15 +172,18 @@
 									</li>
 									<li class="flex items-center py-1">
 										<svg class="mr-2 h-3 w-3 flex-shrink-0 fill-current text-green-500" viewBox="0 0 12 12">
-											<path d="M10.28 1.28L3.989 7.575 1.695 5.28A1 1 0 00.28 6.695l3 3a1 1 0 001.414 0l7-7A1 1 0 0010.28 1.28z" />
+											<path
+												d="M10.28 1.28L3.989 7.575 1.695 5.28A1 1 0 00.28 6.695l3 3a1 1 0 001.414 0l7-7A1 1 0 0010.28 1.28z" />
 										</svg>
 										<div class="text-sm">Quantity Sold: {{ $product->quantity_sold }}</div>
 									</li>
 									<li class="flex items-center py-1">
 										<svg class="mr-2 h-3 w-3 flex-shrink-0 fill-current text-green-500" viewBox="0 0 12 12">
-											<path d="M10.28 1.28L3.989 7.575 1.695 5.28A1 1 0 00.28 6.695l3 3a1 1 0 001.414 0l7-7A1 1 0 0010.28 1.28z" />
+											<path
+												d="M10.28 1.28L3.989 7.575 1.695 5.28A1 1 0 00.28 6.695l3 3a1 1 0 001.414 0l7-7A1 1 0 0010.28 1.28z" />
 										</svg>
-										<div class="text-sm">Ammount Left in Stock: {{ 'GH₵' . $product->quantity * $product->price }}</div>
+										<div class="text-sm">Ammount Left in Stock: {{ 'GH₵' . $product->quantity * $product->price }}
+										</div>
 									</li>
 									<li class="flex items-center py-1">
 										<svg class="mr-2 h-3 w-3 flex-shrink-0 fill-current text-green-500" viewBox="0 0 12 12">
@@ -165,14 +197,33 @@
 											<path
 												d="M10.28 1.28L3.989 7.575 1.695 5.28A1 1 0 00.28 6.695l3 3a1 1 0 001.414 0l7-7A1 1 0 0010.28 1.28z" />
 										</svg>
-										<div class="text-sm">Last bought: {{ $product->records->sortByDesc('created_at')->first()?->created_at->diffForHumans() }}</div>
+										<div class="text-sm">Last bought:
+											{{ $product->records->sortByDesc('created_at')->first()?->created_at->diffForHumans() }}</div>
 									</li>
 									<li class="flex items-center py-1">
 										<svg class="mr-2 h-3 w-3 flex-shrink-0 fill-current text-green-500" viewBox="0 0 12 12">
 											<path
 												d="M10.28 1.28L3.989 7.575 1.695 5.28A1 1 0 00.28 6.695l3 3a1 1 0 001.414 0l7-7A1 1 0 0010.28 1.28z" />
 										</svg>
-										<div class="text-sm">Quis nostrud exercitation</div>
+										<div class="text-sm">Last Edited/Stocked:
+											{{ $product->updated_at?->format('d-m-Y') . ' ('.$product->updated_at?->diffForHumans() .')' }}</div>
+									</li>
+                                    <li class="flex items-center py-1">
+										<svg class="mr-2 h-3 w-3 flex-shrink-0 fill-current text-green-500" viewBox="0 0 12 12">
+											<path
+												d="M10.28 1.28L3.989 7.575 1.695 5.28A1 1 0 00.28 6.695l3 3a1 1 0 001.414 0l7-7A1 1 0 0010.28 1.28z" />
+										</svg>
+										<div class="text-sm">Product added on: {{ $product->created_at->format('d-m-Y') . ' (' . $product->created_at->diffForHumans() .')'}}
+										</div>
+									</li>
+									<li class="flex items-center py-1">
+										<svg class="mr-2 h-3 w-3 flex-shrink-0 fill-current text-green-500" viewBox="0 0 12 12">
+											<path
+												d="M10.28 1.28L3.989 7.575 1.695 5.28A1 1 0 00.28 6.695l3 3a1 1 0 001.414 0l7-7A1 1 0 0010.28 1.28z" />
+										</svg>
+										<div class="text-sm">Expiry Date:
+											{{ $product->exp . '(' . Carbon\Carbon::createFromFormat('Y-m-d', $product->exp)->diffForHumans() . ')' }}
+										</div>
 									</li>
 								</ul>
 							</div>

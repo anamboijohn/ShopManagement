@@ -2,9 +2,11 @@
 
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\CropAndStoreController;
+use App\Http\Controllers\PDFController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RecordController;
+use App\Models\Product;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Route;
 
@@ -23,6 +25,10 @@ Route::get('/', function () {
     return view('auth.login');
 });
 
+Route::view('invoice', 'products.invoice');
+
+Route::get('invoice/index', [CartController::class, 'invoice'])->name('invoice.index');
+
 
 
 Route::middleware('auth')->group(function () {
@@ -33,6 +39,12 @@ Route::middleware('auth')->group(function () {
     Route::get('/dashboard', [ProductController::class, 'dashboard'])->name('dashboard');
     Route::get('/crop', [CropAndStoreController::class, 'crop'])->name('crop');
     Route::get('/products/all', [ProductController::class, 'index'])->name('products.index');
+    Route::get('product/{product}/stock-form', function (Product $product) {
+        return view('products.add-to-stock-form', ['product' => $product]);
+    })->name('product.stock');
+    Route::patch('products/{product}', [ProductController::class, 'stock'])->name('product.stockUpdate');
+
+    Route::get('expiry-notice', [ProductController::class, 'notice'])->name('product.notice');
 
     //Cart features
 
@@ -46,6 +58,9 @@ Route::middleware('auth')->group(function () {
 
     //Records
     Route::get('records/all', [RecordController::class, 'index'])->name('records.index');
+
+    //Pdf
+    Route::get('generate-pdf', [RecordController::class, 'generatePDF'])->name('pdf');
 });
 
 // Route::get('/test', function () {

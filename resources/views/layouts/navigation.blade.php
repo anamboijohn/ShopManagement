@@ -21,6 +21,9 @@
                     <x-nav-link :href="route('products.index')" :active="request()->routeIs('products.index')">
                         {{ __('Products') }}
                     </x-nav-link>
+                    <x-nav-link :href="route('product.notice')" :active="request()->routeIs('product.notice')">
+                        {{ __('Notice') }}
+                    </x-nav-link>
                     <x-products.header/>
                 </div>
 

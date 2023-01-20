@@ -15,6 +15,8 @@ class CartController extends Controller
         $products = Product::all();
 
         foreach ($items as $item) {
+            $product = $products->find($item->id);
+            if($product->quantity < $item->quantity || $product->quantity == 0) return back()->with('error', 'CAN\'T SELL: The quantity of '.$product->name.' left is too small ');
             auth()->user()->records()->create([
                 'product_id'=> $item->id,
                 'product_name'=>$item->name,
@@ -24,7 +26,6 @@ class CartController extends Controller
                 'quantity'=> $products->find($item->id)->quantity,
                 'amount' => $item->price * $item->quantity
             ]);
-            $product = $products->find($item->id);
             $product->quantity -= $item->quantity;
             $product->quantity_sold += $item->quantity;
             $product->save();
@@ -91,5 +92,10 @@ class CartController extends Controller
         session()->flash('success', 'All Item Cart Clear Successfully !');
 
         return redirect()->route('cart.list');
+    }
+
+    public function invoice(){
+        $items = Cart::getContent();
+        return view('products.invoice', ['items'=>$items, 'total'=>Cart::getTotal()]);
     }
 }

@@ -65,9 +65,16 @@
 
 							</tbody>
 						</table>
-						<div>
+						<div class="font-bold">
 							Total: GH₵{{ Cart::getTotal() }}
 						</div>
+						<div x-data="{ message: '' }">
+                            <br><br>
+                            <label for="num">Enter ammount paid to get change: </label> <br>
+                            <input type="number" id="num" name="num" x-model="message" step="0.01" style="max-width: 100px" placeholder="Get Change">
+
+                            <span :class="(message-{{Cart::getTotal()}}) < 0?'text-red-500':'text-green-500'" x-text="((message - {{Cart::getTotal()}}).toFixed(2) >= 0?'Give a balance of GH₵' + (message - {{Cart::getTotal()}}).toFixed(2) : 'The customer Owes GH₵' + ({{Cart::getTotal()}}-message )  )">
+                        </div>
 						<div class="mt-5 flex flex-row gap-5 lg:ml-72">
 							<div>
 								<form action="{{ route('cart.clear') }}" method="POST">
@@ -81,6 +88,9 @@
                                 <button class="bg-blue-700 px-6 py-2 text-white" type="submit">Sell</button>
                             </form>
                             @endif
+                            <div>
+                                <a href="{{route('invoice.index')}}" class="text-blue-600" style="color:blue">Print Invoice</a>
+                            </div>
 							<div>
 							</div>
 						</div>

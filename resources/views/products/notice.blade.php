@@ -1,5 +1,6 @@
 <x-app-layout>
 
+    <center><h1 class="mt-5 font-semibold underline">Displayed Here are Products a Three Months away from Expiry</h1></center>
 	<div class="relative overflow-x-auto shadow-md sm:rounded-lg">
 		<div class="flex gap-5 p-3">
 			<form action="{{ url()->current() }}" method="GET">
@@ -17,7 +18,7 @@
 				</div>
 			</form>
 		</div>
-		<div class="mb-3">
+		{{-- <div class="mb-3">
 			<form action="{{ url()->current() }}" method="GET">
 				@if (request('date'))
 					<input name="date" type="hidden" value="{{ request('date') }}">
@@ -39,24 +40,9 @@
 						class="absolute right-2.5 bottom-2.5 rounded-lg bg-blue-700 px-4 py-2 text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
 						type="submit">Search</button>
 				</div>
-			</form>.
-            <form action="{{route('pdf')}}"" method="get" class="ml-5">
-                @php
-                    $url = request()->fullUrl();
-                    $ammount = 0;
-                @endphp
-
-                @if (request('date'))
-					<input name="date" type="hidden" value="{{ request('date') }}">
-				@endif
-
-                @if (request('search'))
-					<input name="search" type="hidden" value="{{ request('search') }}">
-				@endif
-                <input type="submit" value="Download Pdf" class="hover:cursor-pointer hover:text-blue-600" style="color:blue">
-            </form>
-
-        </div>
+			</form>
+            <a href="{{route('pdf')}}">Download Pdf</a>
+		</div> --}}
 		<table class="w-full text-left text-sm text-gray-500 dark:text-gray-400">
 			<thead class="bg-gray-50 text-xs uppercase text-gray-700 dark:bg-gray-700 dark:text-gray-400">
 				<tr>
@@ -64,55 +50,32 @@
 						Product name
 					</th>
 					<th class="px-6 py-3" scope="col">
-						Unit Price (GH₵)
-					</th>
-					<th class="px-6 py-3" scope="col">
-						Quantity Sold
-					</th>
-					<th class="px-6 py-3" scope="col">
 						Quantity in Stock
 					</th>
 					<th class="px-6 py-3" scope="col">
-						Price (GH₵)
-					</th>
-					<th class="px-6 py-3" scope="col">
-						Date
+						Exp Date
 					</th>
 				</tr>
 			</thead>
 			<tbody>
-				@foreach ($records as $record)
-                @php
-                    $ammount += $record->price * $record->quantity_sold;
-                @endphp
+				@foreach ($products as $product)
 					<tr class="border-b bg-gray-50 dark:border-gray-700 dark:bg-gray-800">
 						<th class="whitespace-nowrap px-6 py-4 font-medium text-gray-900 dark:text-white" scope="row">
-							{{ $record->product_name }}
+							{{ $product->name }}
 						</th>
 						<td class="px-6 py-4">
-							{{ $record->price }}
+							{{ $product->quantity }}
 						</td>
 						<td class="px-6 py-4">
-							{{ $record->quantity_sold }}
-						</td>
-						<td class="px-6 py-4">
-							{{ $record->quantity_inStock }}
-						</td>
-						<td class="px-6 py-4">
-							{{ $record->price * $record->quantity_sold }}
-						</td>
-						<td class="px-6 py-4">
-							{{ $record->created_at->format('d-m-Y') }}
+							{{$product->exp . ' ('. Illuminate\Support\Carbon::createFromFormat('Y-m-d', $product->exp)->diffForHumans() . ')' }}
 						</td>
 					</tr>
 				@endforeach
 			</tbody>
 		</table>
 
-        <p class="text-center">Total: GH₵{{$ammount}}</p>
-
 		<div class="my-10">
-			{{ $records->links() }}
+			{{ $products->links() }}
 		</div>
 	</div>
 </x-app-layout>

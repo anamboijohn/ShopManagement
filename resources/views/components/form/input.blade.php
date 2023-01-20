@@ -15,6 +15,6 @@
             ease-in-out
             m-0
             focus:text-gray-700 focus:bg-white focus:border-blue-900 focus:outline-none"
-        id={{  $name  }} name={{  $name  }} {{ $attributes  }}>
+        id={{  $name  }} name={{  $name  }} {{ $attributes  }}>  <span class="validity"></span>
         <x-input-error :messages="$errors->get($name)" class="mt-2" />
 </div>

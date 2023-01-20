@@ -40,13 +40,32 @@ class ProductController extends Controller
         $attributes = $request->validate([
             'name'=>['required', 'max:255', Rule::unique('products')],
             'description'=>['required', 'max:500'],
-            'price'=>['required', 'max:255'],
-            'quantity'=>['required', 'max:255'],
+            'price'=>['required', 'numeric'],
+            'quantity'=>['required', 'integer', 'numeric'],
+            'exp' =>['required', 'date']
         ]);
-
+        $attributes['stocked_at'] = now();
+        $attributes['updated_at'] = now();
         auth()->user()->products()->create($attributes);
 
+
         return redirect()->route('dashboard')->with('success', 'Product added successfully');
+    }
+
+
+    public function stock(Product $product){
+        $attributes = request()->validate([
+            'quantity'=>['required', 'integer', 'numeric'],
+            'exp' =>['required', 'date']
+        ]);
+        $added = $attributes['quantity'];
+        $attributes['quantity'] += $product->quantity;
+        $attributes['stocked_at'] = now();
+
+        $product->update($attributes);
+
+
+        return redirect()->route('dashboard')->with('success', 'You have successfully added '.$added. ' ' .$product->name.'s to stock!');
     }
 
     /**
@@ -55,9 +74,16 @@ class ProductController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+
+    public function notice(){
+        $products = auth()->user()->products()->whereBetween('exp', [now(), now()->addMonths(3)]);
+
+        return view('products.notice', ['products'=>$products->filter(request(['date']))->paginate()->withQueryString()]);
+    }
+
+    public function show(Product $product)
     {
-        //
+
     }
 
     /**
@@ -84,10 +110,13 @@ class ProductController extends Controller
         $attributes = $request->validate([
             'name'=>['required', 'max:255'],
             'description'=>['required', 'max:500'],
-            'price'=>['required', 'max:255'],
-            'quantity'=>['required', 'max:255'],
+            'price'=>['required', 'numeric',],
+            'quantity'=>['required', 'integer', 'numeric'],
+            'exp' =>['required', 'date']
         ]);
 
+        $attributes['updated_at'] = now();
+        $attributes['stocked_at'] = now();
         $product->update($attributes);
 
         return redirect()->route('dashboard')->with('success', 'Product updated successfully!');
@@ -99,9 +128,10 @@ class ProductController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Product $product)
     {
-        //
+        $product->delete();
+        return back()->with('success', 'product Deleted Successfully');
     }
 
 

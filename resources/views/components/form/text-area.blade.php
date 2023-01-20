@@ -18,6 +18,6 @@
         m-0
         focus:text-gray-700 focus:bg-white focus:border-blue-900 focus:outline-none
         "
-    rows={{ $row }} placeholder={{ $name }} name={{ $name }} id={{ $name }}>{{ $slot ?? old($name) }}</textarea>
+    rows={{ $row }} placeholder={{ $name }} name={{ $name }} id={{ $name }}>{{ $slot ?? old($name) }} </textarea>  <span class="validity"></span>
     <x-input-error :messages="$errors->get($name)" class="mt-2" />
 </div>
